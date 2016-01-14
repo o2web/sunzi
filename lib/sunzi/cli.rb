@@ -11,7 +11,7 @@ module Sunzi
       do_create(project)
     end
 
-    desc 'deploy [user@host:port] [role] [--sudo] or deploy [linode|digital_ocean] [name] [role]  [--sudo]', 'Deploy sunzi project'
+    desc 'deploy [stage] [role] [--sudo]', 'Deploy sunzi project'
     method_options :sudo => false
     def deploy(first, *args)
       do_deploy(first, *args)
@@ -20,16 +20,6 @@ module Sunzi
     desc 'compile', 'Compile sunzi project'
     def compile(role = nil)
       do_compile(role)
-    end
-
-    desc 'setup [linode|digital_ocean]', 'Setup a new VM'
-    def setup(provider)
-      Sunzi::Cloud.new(self, provider).setup
-    end
-
-    desc 'teardown [linode|digital_ocean]', 'Teardown an existing VM'
-    def teardown(provider)
-      Sunzi::Cloud.new(self, provider).teardown
     end
 
     desc 'version', 'Show version'
@@ -55,14 +45,10 @@ module Sunzi
       end
 
       def do_deploy(first, *args)
-        if ['linode', 'digital_ocean'].include?(first)
-          @instance_attributes = YAML.load(File.read("#{first}/instances/#{args[0]}.yml"))
-          target = @instance_attributes[:fqdn]
-          role = args[1]
-        else
-          target = first
-          role = args[0]
-        end
+        stage = first
+        role = args[0]
+
+        @cap_configs = load_cap_configs(stage)
 
         sudo = 'sudo ' if options.sudo?
         user, host, port = parse_target(target)
@@ -105,6 +91,7 @@ module Sunzi
       end
 
       def do_compile(role)
+
         # Check if you're in the sunzi directory
         abort_with 'You must be in the sunzi folder' unless File.exists?('sunzi.yml')
         # Check if role exists
@@ -115,7 +102,6 @@ module Sunzi
 
         # Merge instance attributes
         @config['attributes'] ||= {}
-        @config['attributes'].update(Hash[@instance_attributes.map{|k,v| [k.to_s, v] }]) if @instance_attributes
 
         # Break down attributes into individual files
         (@config['attributes'] || {}).each {|key, value| create_file "compiled/attributes/#{key}", value }
@@ -158,6 +144,10 @@ module Sunzi
         files.each { |file| send copy_or_template, File.expand_path(file), File.expand_path("compiled/#{file}") }
 
         (config['files'] || []).each {|file| send copy_or_template, File.expand_path(file), "compiled/files/#{File.basename(file)}" }
+      end
+
+      def load_cap_config(stage)
+        path = "config/deploy/#{stage}.rb"
       end
     end
   end

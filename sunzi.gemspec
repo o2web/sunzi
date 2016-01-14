@@ -1,7 +1,7 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.name          = 'sunzi'
+  spec.name          = 'sunzi-rails'
   spec.version       = '1.5.2' # retrieve this value by: Gem.loaded_specs['sunzi'].version.to_s
   spec.authors       = ['Kenn Ejima']
   spec.email         = ['kenn.ejima@gmail.com']
