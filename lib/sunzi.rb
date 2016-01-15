@@ -7,7 +7,17 @@ require 'rainbow/version'
 require 'rainbow/ext/string' unless Rainbow::VERSION < '2.0.0'
 
 module Sunzi
-  autoload :Cli,        'sunzi/cli'
-  autoload :Logger,     'sunzi/logger'
-  autoload :Utility,    'sunzi/utility'
+  if ENV['RAILS_ENV'] == 'development'
+    autoload :Capistrano, './lib/sunzi/cli/capistrano'
+    autoload :Database,   './lib/sunzi/cli/database'
+    autoload :Cli,        './lib/sunzi/cli'
+    autoload :Logger,     './lib/sunzi/logger'
+    autoload :Utility,    './lib/sunzi/utility'
+  else
+    autoload :Capistrano, 'sunzi/cli/capistrano'
+    autoload :Database,   'sunzi/cli/database'
+    autoload :Cli,        'sunzi/cli'
+    autoload :Logger,     'sunzi/logger'
+    autoload :Utility,    'sunzi/utility'
+  end
 end

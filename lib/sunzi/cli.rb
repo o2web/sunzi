@@ -48,14 +48,22 @@ module Sunzi
         stage = first
         role = args[0]
 
-        @cap_configs = load_cap_configs(stage)
+        cap = Capistrano.load_env(stage)
 
-        sudo = 'sudo ' if options.sudo?
-        user, host, port = parse_target(target)
+        if options.sudo?
+          sudo = 'sudo '
+          user = cap[:sys_admin]
+        else
+          user = cap[:server][:user]
+        end
+        host = cap[:server][:name]
+        port = cap[:port]
+
         endpoint = "#{user}@#{host}"
 
         # compile attributes and recipes
         do_compile(role)
+        @config = Database.load_env(stage).merge(@config)
 
         # The host key might change when we instantiate a new VM, so
         # we remove (-R) the old host key from known_hosts.
@@ -91,63 +99,59 @@ module Sunzi
       end
 
       def do_compile(role)
-
         # Check if you're in the sunzi directory
-        abort_with 'You must be in the sunzi folder' unless File.exists?('sunzi.yml')
+        abort_with 'You must be in the sunzi folder' unless File.exists?(based("sunzi.yml"))
         # Check if role exists
-        abort_with "#{role} doesn't exist!" if role and !File.exists?("roles/#{role}.sh")
+        abort_with "#{role} doesn't exist!" unless File.exists?(based("roles/#{role}.sh"))
 
         # Load sunzi.yml
-        @config = YAML.load(File.read('sunzi.yml'))
+        @config = YAML.load(File.read(based("sunzi.yml")))
 
         # Merge instance attributes
         @config['attributes'] ||= {}
 
         # Break down attributes into individual files
-        (@config['attributes'] || {}).each {|key, value| create_file "compiled/attributes/#{key}", value }
+        (@config['attributes'] || {}).each {|key, value| create_file compiled("attributes/#{key}"), value }
 
         # Retrieve remote recipes via HTTP
         cache_remote_recipes = @config['preferences'] && @config['preferences']['cache_remote_recipes']
         (@config['recipes'] || []).each do |key, value|
-          next if cache_remote_recipes and File.exists?("compiled/recipes/#{key}.sh")
+          next if cache_remote_recipes and File.exists?(compiled("recipes/#{key}.sh"))
           get value, "compiled/recipes/#{key}.sh"
         end
 
-        copy_or_template = (@config['preferences'] && @config['preferences']['eval_erb']) ? :template : :copy_file
-        copy_local_files(@config, copy_or_template)
+        copy_local_files(@config)
 
         # Build install.sh
-        if role
-          if copy_or_template == :template
-            template File.expand_path('install.sh'), 'compiled/_install.sh'
-            create_file 'compiled/install.sh', File.binread('compiled/_install.sh') << "\n" << File.binread("compiled/roles/#{role}.sh")
-          else
-            create_file 'compiled/install.sh', File.binread('install.sh') << "\n" << File.binread("roles/#{role}.sh")
-          end
-        else
-          send copy_or_template, File.expand_path('install.sh'), 'compiled/install.sh'
+        install_path = based("install.sh")
+        compiled_install_path = compiled("install.sh")
+        tmp_install_path = compiled("_install.sh")
+
+        template install_path, tmp_install_path
+        content = File.binread(tmp_install_path) << "\n" << File.binread(compiled("roles/#{role}.sh"))
+
+        create_file compiled_install_path, content
+      end
+
+      def copy_local_files(config)
+        @attributes = OpenStruct.new(config['attributes'])
+        files = Dir["{config/sunzi/recipes,config/sunzi/roles,config/sunzi/files}/**/*"].select { |file| File.file?(file) }
+
+        files.each do |file|
+          template file, compiled(file)
+        end
+
+        (config['files'] || []).each do |file|
+          template file, compiled("files/#{File.basename(file)}")
         end
       end
 
-      def parse_target(target)
-        target.match(/(.*@)?(.*?)(:.*)?$/)
-        # Load ssh config if it exists
-        config = Net::SSH::Config.for($2)
-        [ ($1 && $1.delete('@') || config[:user] || 'root'), 
-          config[:host_name] || $2, 
-          ($3 && $3.delete(':') || config[:port] && config[:port].to_s || '22') ]
+      def based(file)
+        File.expand_path("config/sunzi/#{file}")
       end
 
-      def copy_local_files(config, copy_or_template)
-        @attributes = OpenStruct.new(config['attributes'])
-        files = Dir['{recipes,roles,files}/**/*'].select { |file| File.file?(file) }
-        files.each { |file| send copy_or_template, File.expand_path(file), File.expand_path("compiled/#{file}") }
-
-        (config['files'] || []).each {|file| send copy_or_template, File.expand_path(file), "compiled/files/#{File.basename(file)}" }
-      end
-
-      def load_cap_config(stage)
-        path = "config/deploy/#{stage}.rb"
+      def compiled(file)
+        File.expand_path("compiled/#{file.sub('config/sunzi/', '')}")
       end
     end
   end
