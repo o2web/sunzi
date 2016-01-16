@@ -100,18 +100,17 @@ module Sunzi
 
       def do_compile(role)
         # Check if you're in the sunzi directory
-        abort_with 'You must be in the sunzi folder' unless File.exists?(based("sunzi.yml"))
+        abort_with 'You must have a sunzi folder' unless File.exists?(based("sunzi.yml"))
         # Check if role exists
         abort_with "#{role} doesn't exist!" unless File.exists?(based("roles/#{role}.sh"))
 
         # Load sunzi.yml
         @config = YAML.load(File.read(based("sunzi.yml")))
 
-        # Merge instance attributes
-        @config['attributes'] ||= {}
-
         # Break down attributes into individual files
-        (@config['attributes'] || {}).each {|key, value| create_file compiled("attributes/#{key}"), value }
+        @config['attributes'] ||= {}
+        @config['attributes'].each {|key, value| create_file compiled("attributes/#{key}"), value }
+        @attributes = OpenStruct.new(@config['attributes'])
 
         # Retrieve remote recipes via HTTP
         cache_remote_recipes = @config['preferences'] && @config['preferences']['cache_remote_recipes']
@@ -121,33 +120,30 @@ module Sunzi
         end
 
         copy_local_files(@config)
-
-        # Build install.sh
-        install_path = based("install.sh")
-        compiled_install_path = compiled("install.sh")
-        tmp_install_path = compiled("_install.sh")
-
-        template install_path, tmp_install_path
-        content = File.binread(tmp_install_path) << "\n" << File.binread(compiled("roles/#{role}.sh"))
-
-        create_file compiled_install_path, content
+        build_install(role)
       end
 
       def copy_local_files(config)
-        @attributes = OpenStruct.new(config['attributes'])
         files = Dir["{config/sunzi/recipes,config/sunzi/roles,config/sunzi/files}/**/*"].select { |file| File.file?(file) }
 
         files.each do |file|
-          template file, compiled(file)
+          template based(file), compiled(file)
         end
 
         (config['files'] || []).each do |file|
-          template file, compiled("files/#{File.basename(file)}")
+          template based(file), compiled("files/#{File.basename(file)}")
         end
       end
 
+      def build_install(role)
+        _install_path = compiled("_install.sh")
+        template based("install.sh"), _install_path
+        content = File.binread(_install_path) << "\n" << File.binread(compiled("roles/#{role}.sh"))
+        create_file compiled("install.sh"), content
+      end
+
       def based(file)
-        File.expand_path("config/sunzi/#{file}")
+        File.expand_path("config/sunzi/#{file.sub('config/sunzi/', '')}")
       end
 
       def compiled(file)
