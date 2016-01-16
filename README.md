@@ -93,7 +93,7 @@ How do you pass dynamic values?
 
 There are two ways to pass dynamic values to the script - ruby and bash.
 
-**For ruby (recommended)**: Make sure `eval_erb: true` is set in `sunzi.yml`. In the compile phase, attributes defined in `sunzi.yml` are accessible from any files in the form of `<%= @attributes.ruby_version %>`.
+**For ruby**: In the compile phase, attributes defined in `sunzi.yml` are accessible from any files in the form of `<%= @attributes.ruby_version %>`.
 
 **For bash**: In the compile phase, attributes defined in `sunzi.yml` are split into multiple files in `compiled/attributes`, one per attribute. Now you can refer to it by `$(cat attributes/ruby_version)` in the script.
 
