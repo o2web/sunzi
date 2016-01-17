@@ -36,7 +36,7 @@ It generates a `config/sunzi` folder along with subdirectories and templates. In
 Go into your `config/deploy.rb` and make sure to have these set: 
 
 ```ruby
-set :ruby_version, IO.read("#{File.dirname(__FILE__)}/../../.ruby-version").strip
+set :ruby_version, IO.read("#{File.dirname(__FILE__)}/../.ruby-version").strip
 set :admin_name, 'admin'
 set :deployer_name, 'deployer'
 ```
