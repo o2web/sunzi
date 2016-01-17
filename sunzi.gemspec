@@ -20,8 +20,9 @@ Gem::Specification.new do |spec|
   spec.executables   = ["sunzi-cap"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'rails', "~> #{Sunzi::RAILS_VERSION}", ">= #{Sunzi::RAILS_VERSION}.0"
+  spec.add_dependency 'activesupport', "~> #{Sunzi::RAILS_VERSION}", ">= #{Sunzi::RAILS_VERSION}.0"
 
+  spec.add_runtime_dependency 'thor'
   spec.add_runtime_dependency 'rainbow'
   spec.add_runtime_dependency 'net-ssh'
 
