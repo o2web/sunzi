@@ -33,9 +33,9 @@ class TestCli < Minitest::Test
   end
 
   def test_create
-    @cli.create 'sandbox'
-    assert File.exist?('sandbox/sunzi.yml')
-    FileUtils.rm_rf 'sandbox'
+    @cli.create
+    assert File.exist?('config/sunzi/sunzi.yml')
+    FileUtils.rm_rf 'config/sunzi'
   end
 
   def test_copy_local_files

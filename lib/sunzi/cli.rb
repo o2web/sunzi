@@ -7,8 +7,8 @@ module Sunzi
     include Thor::Actions
 
     desc 'create', 'Create sunzi project'
-    def create(project = 'sunzi')
-      do_create(project)
+    def create
+      do_create
     end
 
     desc 'deploy [stage] [role] [--sudo]', 'Deploy sunzi project'
@@ -34,14 +34,8 @@ module Sunzi
         File.expand_path('../../',__FILE__)
       end
 
-      def do_create(project)
-        copy_file 'templates/create/.gitignore',         "#{project}/.gitignore"
-        copy_file 'templates/create/sunzi.yml',          "#{project}/sunzi.yml"
-        copy_file 'templates/create/install.sh',         "#{project}/install.sh"
-        copy_file 'templates/create/recipes/sunzi.sh',   "#{project}/recipes/sunzi.sh"
-        copy_file 'templates/create/roles/db.sh',        "#{project}/roles/db.sh"
-        copy_file 'templates/create/roles/web.sh',       "#{project}/roles/web.sh"
-        copy_file 'templates/create/files/.gitkeep',     "#{project}/files/.gitkeep"
+      def do_create
+        directory 'templates/create', 'config/sunzi'
       end
 
       def do_deploy(first, *args)
