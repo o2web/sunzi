@@ -1,7 +1,7 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version = ">= 2.0"
+  spec.required_ruby_version = ">= #{Sunzi::RUBY_VERSION}"
 
   spec.name          = 'sunzi-rails'
   spec.version       = '0.2.3' # retrieve this value by: Gem.loaded_specs['sunzi'].version.to_s
@@ -17,9 +17,8 @@ Gem::Specification.new do |spec|
   spec.executables   = ["sunzi-cap"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'rails', "~> 4.2", ">= 4.2.0"
+  spec.add_dependency 'rails', "~> #{Sunzi::RAILS_VERSION}", ">= #{Sunzi::RAILS_VERSION}.0"
 
-  spec.add_runtime_dependency 'bundler', '~> 1.3'
   spec.add_runtime_dependency 'thor'
   spec.add_runtime_dependency 'rainbow'
   spec.add_runtime_dependency 'net-ssh'

@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'pathname'
 
 # Abort beautifully with ctrl+c.
 Signal.trap(:INT) { abort "\nAborting." }
@@ -7,8 +8,17 @@ Signal.trap(:INT) { abort "\nAborting." }
 if ENV['RAILS_ENV'] == 'development'
   require './lib/sunzi'
 else
+  source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+
+  $LOAD_PATH << source_path
   require 'sunzi'
 end
+
+if ['-v', '--version'].include? ARGV[0]
+  puts Sunzi::VERSION
+  exit 0
+end
+
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/ordered_hash'
