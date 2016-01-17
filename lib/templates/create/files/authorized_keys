@@ -1,0 +1,1 @@
+<%= @attributes.deployer_public_key %>

@@ -18,8 +18,8 @@ module Sunzi
     end
 
     desc 'compile', 'Compile sunzi project'
-    def compile(role = nil)
-      do_compile(role)
+    def compile(first, *args)
+      do_compile(first, *args)
     end
 
     desc 'version', 'Show version'
@@ -45,43 +45,26 @@ module Sunzi
       end
 
       def do_deploy(first, *args)
-        stage = first
-        role = args[0]
-
-        cap = Capistrano.load_env(stage)
-
-        if options.sudo?
-          sudo = 'sudo '
-          user = cap[:sys_admin]
-        else
-          user = cap[:server][:user]
-        end
-        host = cap[:server][:name]
-        port = cap[:port]
-
-        endpoint = "#{user}@#{host}"
-
         # compile attributes and recipes
-        do_compile(role)
-        @config = Database.load_env(stage).merge(@config)
+        do_compile(first, *args)
 
         # The host key might change when we instantiate a new VM, so
         # we remove (-R) the old host key from known_hosts.
-        `ssh-keygen -R #{host} 2> /dev/null`
+        `ssh-keygen -R #{@host} 2> /dev/null`
 
         remote_commands = <<-EOS
         rm -rf ~/sunzi &&
         mkdir ~/sunzi &&
         cd ~/sunzi &&
         tar xz &&
-        #{sudo}bash install.sh
+        #{@sudo}bash install.sh
         EOS
 
         remote_commands.strip! << ' && rm -rf ~/sunzi' if @config['preferences'] and @config['preferences']['erase_remote_folder']
 
         local_commands = <<-EOS
         cd compiled
-        tar cz . | ssh -o 'StrictHostKeyChecking no' #{endpoint} -p #{port} '#{remote_commands}'
+        tar cz . | ssh -o 'StrictHostKeyChecking no' #{@user}@#{@host} -p #{@port} '#{remote_commands}'
         EOS
 
         Open3.popen3(local_commands) do |stdin, stdout, stderr|
@@ -98,47 +81,71 @@ module Sunzi
         end
       end
 
-      def do_compile(role)
-        # Check if you're in the sunzi directory
-        abort_with 'You must have a sunzi folder' unless File.exists?(based("sunzi.yml"))
-        # Check if role exists
-        abort_with "#{role} doesn't exist!" unless File.exists?(based("roles/#{role}.sh"))
+      def do_compile(first, *args)
+        load_env(first, *args)
 
-        # Load sunzi.yml
+        compile_attributes
+        copy_remote_recipes
+        copy_local_files
+        build_install
+      end
+
+      def load_env(first, *args)
+        @stage = first
+        @role = args[0]
+
+        abort_with 'You must have a sunzi folder' unless File.exists?(based("sunzi.yml"))
+        abort_with "#{@role} doesn't exist!"       unless File.exists?(based("roles/#{@role}.sh"))
+
+        cap = Capistrano.load_env(@stage)
+        if options.sudo?
+          @sudo = 'sudo '
+          @user = cap[:sys_admin]
+        else
+          @user = cap[:server][:user]
+        end
+        @host = cap[:server][:name]
+        @port = cap[:port]
+
         @config = YAML.load(File.read(based("sunzi.yml")))
 
-        # Break down attributes into individual files
-        @config['attributes'] ||= {}
-        @config['attributes'].each {|key, value| create_file compiled("attributes/#{key}"), value }
-        @attributes = OpenStruct.new(@config['attributes'])
+        @attributes = Database.load_env(@stage)
+          .merge(cap.slice(:ruby_version, :deployer_name))
+          .merge(Secrets.load_env(@stage).slice(:deployer_password, :deployer_public_key))
+          .merge(@config['attributes'] || {})
+      end
 
+      def compile_attributes
+        # Break down attributes into individual files
+        @attributes.each {|key, value| create_file compiled("attributes/#{key}"), value }
+        @attributes = OpenStruct.new(@attributes)
+      end
+
+      def copy_remote_recipes
         # Retrieve remote recipes via HTTP
         cache_remote_recipes = @config['preferences'] && @config['preferences']['cache_remote_recipes']
         (@config['recipes'] || []).each do |key, value|
           next if cache_remote_recipes and File.exists?(compiled("recipes/#{key}.sh"))
           get value, "compiled/recipes/#{key}.sh"
         end
-
-        copy_local_files(@config)
-        build_install(role)
       end
 
-      def copy_local_files(config)
+      def copy_local_files
         files = Dir["{config/sunzi/recipes,config/sunzi/roles,config/sunzi/files}/**/*"].select { |file| File.file?(file) }
 
         files.each do |file|
           template based(file), compiled(file)
         end
 
-        (config['files'] || []).each do |file|
+        (@config['files'] || []).each do |file|
           template based(file), compiled("files/#{File.basename(file)}")
         end
       end
 
-      def build_install(role)
+      def build_install
         _install_path = compiled("_install.sh")
         template based("install.sh"), _install_path
-        content = File.binread(_install_path) << "\n" << File.binread(compiled("roles/#{role}.sh"))
+        content = File.binread(_install_path) << "\n" << File.binread(compiled("roles/#{@role}.sh"))
         create_file compiled("install.sh"), content
       end
 

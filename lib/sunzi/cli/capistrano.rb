@@ -10,7 +10,7 @@ module Sunzi
       stage_path = File.expand_path("config/deploy/#{stage}.rb")
       instance_eval(File.read(deploy_path), deploy_path)
       instance_eval(File.read(stage_path), stage_path)
-      @env
+      @env = HashWithIndifferentAccess.new(@env)
     end
 
     def lock(version); end

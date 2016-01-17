@@ -9,4 +9,9 @@ if ENV['RAILS_ENV'] == 'development'
 else
   require 'sunzi'
 end
+require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/ordered_hash'
+require 'active_support/hash_with_indifferent_access'
+
 Sunzi::Cli.start(ARGV, { destination_root: 'config' })

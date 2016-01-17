@@ -1,8 +1,9 @@
 ---
 # Dynamic variables here will be compiled to individual files in compiled/attributes.
 attributes:
-  environment: production
-  ruby_version: 2.0.0
+  timezone: America/New_York
+  locales: en_US en_US.UTF-8
+  # mysql_root_password: secret
 
 # Remote recipes here will be downloaded to compiled/recipes.
 recipes:

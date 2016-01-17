@@ -1,0 +1,1 @@
+<%= @attributes.deployer_name %> ALL=(ALL) NOPASSWD:ALL
