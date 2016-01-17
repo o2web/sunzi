@@ -3,7 +3,7 @@
 attributes:
   timezone: America/New_York
   locales: en_US en_US.UTF-8
-  # mysql_root_password: secret
+  mysql_root_password: root
 
 # Remote recipes here will be downloaded to compiled/recipes.
 recipes:
