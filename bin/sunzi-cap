@@ -14,4 +14,4 @@ require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/ordered_hash'
 require 'active_support/hash_with_indifferent_access'
 
-Sunzi::Cli.start(ARGV, { destination_root: 'config' })
+Sunzi::Cli.start
