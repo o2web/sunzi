@@ -4,15 +4,10 @@ require 'pathname'
 # Abort beautifully with ctrl+c.
 Signal.trap(:INT) { abort "\nAborting." }
 
-# Load the main lib and invoke CLI.
-if ENV['RAILS_ENV'] == 'development'
-  require './lib/sunzi'
-else
-  source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+$LOAD_PATH << source_path
 
-  $LOAD_PATH << source_path
-  require 'sunzi'
-end
+require 'sunzi'
 
 if ['-v', '--version'].include? ARGV[0]
   puts Sunzi::VERSION

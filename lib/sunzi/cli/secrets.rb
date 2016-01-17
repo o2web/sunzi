@@ -1,5 +1,3 @@
-require 'active_support/hash_with_indifferent_access'
-
 module Sunzi
   module Cli::Secrets
     extend self
