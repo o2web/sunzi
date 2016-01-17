@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rails', "~> #{Sunzi::RAILS_VERSION}", ">= #{Sunzi::RAILS_VERSION}.0"
 
-  spec.add_runtime_dependency 'thor'
   spec.add_runtime_dependency 'rainbow'
   spec.add_runtime_dependency 'net-ssh'
 
