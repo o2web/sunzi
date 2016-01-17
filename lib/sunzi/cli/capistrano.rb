@@ -13,9 +13,6 @@ module Sunzi
       @env = HashWithIndifferentAccess.new(@env)
     end
 
-    def lock(version); end
-    def namespace(options = {}); end
-
     def set(key, value)
       @env[key] = value
     end
