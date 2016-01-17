@@ -1,6 +1,7 @@
 require 'thor'
 require 'rainbow'
 require 'yaml'
+require 'sunzi/version'
 
 # Starting 2.0.0, Rainbow no longer patches string with the color method by default.
 require 'rainbow/version'
