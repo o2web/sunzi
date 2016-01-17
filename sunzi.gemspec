@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= #{Sunzi::RUBY_VERSION}"
 
   spec.name          = 'sunzi-rails'
-  spec.version       = '0.2.3' # retrieve this value by: Gem.loaded_specs['sunzi'].version.to_s
+  spec.version       = Sunzi::VERSION
   spec.authors       = ['Kenn Ejima', 'Patrice Lebel']
   spec.email         = ['kenn.ejima@gmail.com']
   spec.homepage      = 'http://github.com/o2web/sunzi-rails'
