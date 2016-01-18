@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'sunzi-rails'
   spec.version       = Sunzi::VERSION
   spec.authors       = ['Kenn Ejima', 'Patrice Lebel']
-  spec.email         = ['kenn.ejima@gmail.com']
+  spec.email         = ['patrice@lebel.com']
   spec.homepage      = 'http://github.com/o2web/sunzi-rails'
   spec.summary       = %q{Server provisioning utility for minimalists}
   spec.description   = %q{Server provisioning utility for minimalists}

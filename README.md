@@ -204,8 +204,3 @@ Also keep in mind that you need to specify the port number 2222 within `config/d
 ```bash
 $ sunzi-cap deploy vagrant deployer
 ```
-
-Demonstration Videos
--------
-
-You can watch video on how to deploy a Rails 4.1 app with Sunzi and Capistrano 3 at http://youtu.be/3mwupXqtkmg
