@@ -187,19 +187,7 @@ Vagrant
 
 If you're using Sunzi with [Vagrant](http://vagrantup.com/), make sure that you have a root access via SSH.
 
-An easy way is to edit `Vagrantfile`:
-
-```ruby
-Vagrant.configure("2") do |config|
-  config.vm.provision "shell",
-    inline: "sudo echo 'root:vagrant' | /usr/sbin/chpasswd"
-  end
-end
-```
-
-and now run `vagrant up`, it will change the root password to `vagrant`.
-
-Also keep in mind that you need to specify the port number 2222 within `config/deploy/vagrant.rb`.
+After `vagrant up`, connect with `vagrant ssh` and add your public ssh key `id_rsa.pub` to `~/.ssh/authorized_keys`.
 
 ```bash
 $ sunzi-cap deploy vagrant deployer
