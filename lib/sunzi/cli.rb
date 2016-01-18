@@ -94,11 +94,11 @@ module Sunzi
         cap = Capistrano.load_env(@stage)
         if options.sudo?
           @sudo = 'sudo '
-          @user = cap[:sys_admin]
+          @user = cap[:admin_name]
         else
-          @user = cap[:server][:user]
+          @user = cap[:deployer_name]
         end
-        @host = cap[:server][:name]
+        @host = cap[:server]
         @port = cap[:port]
 
         @config = YAML.load(File.read(based("sunzi.yml")))

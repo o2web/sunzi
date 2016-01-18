@@ -25,10 +25,6 @@ module Sunzi
       end
     end
 
-    def server(name, properties = {})
-      @env[:server] = {name: name}.merge(properties)
-    end
-
     def method_missing(name, *args, &block)
       if caller.join.include? 'load_env'
         # do nothing
