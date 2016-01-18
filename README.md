@@ -60,6 +60,17 @@ Finally, add `/compiled` to your `.gitignore` file.
 
 All those settings can be overriden in your `sunzi.yml` file within `attributes`.
 
+Also, contextual attributes are available through `@attributes`:
+
+```ruby
+@attributes.env_stage
+@attributes.env_role
+@attributes.env_sudo
+@attributes.env_user
+@attributes.env_host
+@attributes.env_port
+```
+
 Go into the project directory, then run `sunzi-cap deploy`:
 
 ```bash

@@ -106,6 +106,14 @@ module Sunzi
         @attributes = Database.load_env(@stage)
           .merge(cap.slice(:ruby_version, :deployer_name))
           .merge(Secrets.load_env(@stage).slice(:deployer_password, :deployer_public_key))
+          .merge(
+            env_stage: @stage,
+            env_role: @role,
+            env_sudo: options.sudo?,
+            env_user: @user,
+            env_host: @host,
+            env_port: @port
+          )
           .merge(@config['attributes'] || {})
       end
 
