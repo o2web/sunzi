@@ -13,7 +13,7 @@ source recipes/mysql.sh
 <% end -%>
 source recipes/passenger.sh
 source recipes/user.sh
-# source recipes/sysstat.sh
+source recipes/sysstat.sh
 
 sunzi.elapsed_time $start
 
