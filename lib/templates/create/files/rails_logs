@@ -1,0 +1,9 @@
+<%= @attributes.deploy_to %>/current/log/*.log {
+  weekly
+  missingok
+  rotate 6
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}
