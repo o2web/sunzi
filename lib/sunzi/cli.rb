@@ -103,18 +103,14 @@ module Sunzi
 
         @config = YAML.load(File.read(based("sunzi.yml")))
 
-        @attributes = Database.load_env(@stage)
-          .merge(cap.slice(:ruby_version, :deployer_name))
-          .merge(Secrets.load_env(@stage).slice(:deployer_password, :deployer_public_key))
-          .merge(
-            env_stage: @stage,
-            env_role: @role,
-            env_sudo: options.sudo?,
-            env_user: @user,
-            env_host: @host,
-            env_port: @port
-          )
-          .merge(@config['attributes'] || {})
+        @attributes = cap.merge(Database.load_env(@stage)).merge(Secrets.load_env(@stage)).merge(
+          env_stage: @stage,
+          env_role: @role,
+          env_sudo: options.sudo?,
+          env_user: @user,
+          env_host: @host,
+          env_port: @port
+        ).merge(@config['attributes'] || {})
       end
 
       def compile_attributes
