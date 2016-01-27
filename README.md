@@ -60,7 +60,7 @@ Finally, add `/compiled` to your `.gitignore` file.
 
 All those settings can be overriden in your `sunzi.yml` file within `attributes`.
 
-Also, contextual attributes are available through `@attributes`:
+Also, deploy.rb, deploy/[stage].rb, database.yml (prefixed with `db_`), secrets.yml and contextual attributes (prefixed with `env_`) are available through `@attributes`:
 
 ```ruby
 @attributes.env_stage
