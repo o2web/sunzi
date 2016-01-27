@@ -1,4 +1,4 @@
-<%= @attributes.deploy_to %>/current/log/*.log {
+<%= @attributes.deploy_to %><%= @attributes.env_stage %>/current/log/*.log {
   weekly
   missingok
   rotate 6
