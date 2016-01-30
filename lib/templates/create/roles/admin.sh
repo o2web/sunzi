@@ -15,6 +15,7 @@ source recipes/passenger.sh
 source recipes/user.sh
 source recipes/analysers.sh
 source recipes/logrotate.sh
+source recipes/noatime.sh
 
 sunzi.elapsed_time $start
 
