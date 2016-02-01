@@ -16,6 +16,7 @@ source recipes/user.sh
 source recipes/analysers.sh
 source recipes/logrotate.sh
 source recipes/noatime.sh
+source recipes/monit.sh
 
 sunzi.elapsed_time $start
 
