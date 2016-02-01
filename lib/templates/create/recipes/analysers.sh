@@ -4,7 +4,7 @@ if sunzi.to_be_done "install analysers"; then
 
   sunzi.mute "apt-get update"
 
-  sunzi.install "goaccess" #TODO: http://goaccess.io/faq#howto-config
+  sunzi.install "goaccess"
   sunzi.install "iotop"
   sunzi.install "iftop"
   sunzi.install "ifstat"
