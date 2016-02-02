@@ -11,6 +11,8 @@ if sunzi.to_be_done "install analysers"; then
   sunzi.install "nethogs"
   sunzi.install "sysstat"
 
+  pip install ngxtop
+
   sed -i 's/#time-format %H:%M:%S/time-format %H:%M:%S/' /etc/goaccess.conf
   sed -i 's|#date-format %d/%b/%Y|date-format %d/%b/%Y|' /etc/goaccess.conf
   sed -i 's/#log-format %h %\^\[%d:%t %\^\] "%r" %s %b "%R" "%u"/log-format %h - %\^ \[%d:%t %\^\] "%r" %s %b "%R" "%u" %T %\^/' /etc/goaccess.conf

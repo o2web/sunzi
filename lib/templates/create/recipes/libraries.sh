@@ -17,6 +17,7 @@ if sunzi.to_be_done "install librairies"; then
   sunzi.install "libxslt1-dev"
   sunzi.install "libcurl4-openssl-dev"
   sunzi.install "python-software-properties"
+  sunzi.install "python-pip"
   sunzi.install "libffi-dev"
   sunzi.install "imagemagick"
 
