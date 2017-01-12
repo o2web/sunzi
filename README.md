@@ -37,7 +37,7 @@ Go into your `config/deploy.rb` and make sure to have these set:
 
 ```ruby
 set :ruby_version, IO.read("#{File.dirname(__FILE__)}/../.ruby-version").strip
-set :admin_name, 'admin'
+set :admin_name, 'deployer'
 set :deployer_name, 'deployer'
 ```
 
@@ -76,8 +76,7 @@ It's important to note that `deploy.rb` and `deploy/[stage].rb` are loaded in th
 Go into the project directory, then run `sunzi-cap deploy`:
 
 ```bash
-$ sunzi-cap deploy staging admin --sudo
-$ sunzi-cap deploy staging deployer
+$ sunzi-cap deploy staging deployer --sudo
 ```
 
 Now, what it actually does is:
