@@ -13,8 +13,6 @@ source recipes/postgres.sh
 source recipes/mysql.sh
 <% end -%>
 source recipes/passenger.sh
-source recipes/sysstat.sh
-source recipes/goaccess.sh
 source recipes/logrotate.sh
 source recipes/noatime.sh
 source recipes/monit.sh

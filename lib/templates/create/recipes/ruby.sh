@@ -41,9 +41,8 @@ if sunzi.to_be_done "install ruby"; then
   echo 'setting doc for deployer'
   echo 'gem: --no-ri --no-rdoc' > $DEPLOYER_PATH/.gemrc
 
-  echo 'install bundler and backup'
+  echo 'install bundler'
   gem install bundler
-  gem install backup
 
   sunzi.done "install ruby"
 fi
